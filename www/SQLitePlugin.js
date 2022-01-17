@@ -35,10 +35,18 @@
     return sqlError;
   };
 
-  nextTick = window.setImmediate || function(fun) {
-    window.setTimeout(fun, 0);
-  };
+  nextTick = function (fn) {
+    var d = new Date().getTime();
+    var done = function () {
+      return fn();
+    };
 
+    if (window.CAPACITOR_STATE === 'inactive') {
+      return done();
+    }
+
+    return window.setTimeout(done);
+  };
 
   /*
     Utility that avoids leaking the arguments object. See
